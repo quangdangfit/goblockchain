@@ -11,7 +11,7 @@ import (
 	"path"
 	"strconv"
 
-	"github.com/quangdangfit/goblockchain/block"
+	"github.com/quangdangfit/goblockchain/blockchain"
 	"github.com/quangdangfit/goblockchain/utils"
 	"github.com/quangdangfit/goblockchain/wallet"
 )
@@ -92,7 +92,7 @@ func (ws *WalletServer) CreateTransaction(w http.ResponseWriter, req *http.Reque
 		signature := transaction.GenerateSignature()
 		signatureStr := signature.String()
 
-		bt := &block.TransactionRequest{
+		bt := &blockchain.TransactionRequest{
 			t.SenderBlockchainAddress,
 			t.RecipientBlockchainAddress,
 			t.SenderPublicKey,
@@ -135,7 +135,7 @@ func (ws *WalletServer) WalletAmount(w http.ResponseWriter, req *http.Request) {
 		w.Header().Add("Content-Type", "application/json")
 		if bcsResp.StatusCode == 200 {
 			decoder := json.NewDecoder(bcsResp.Body)
-			var bar block.AmountResponse
+			var bar blockchain.AmountResponse
 			err := decoder.Decode(&bar)
 			if err != nil {
 				log.Printf("ERROR: %v", err)

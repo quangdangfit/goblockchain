@@ -7,12 +7,12 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/quangdangfit/goblockchain/block"
+	"github.com/quangdangfit/goblockchain/blockchain"
 	"github.com/quangdangfit/goblockchain/utils"
 	"github.com/quangdangfit/goblockchain/wallet"
 )
 
-var cache map[string]*block.Blockchain = make(map[string]*block.Blockchain)
+var cache map[string]*blockchain.Blockchain = make(map[string]*blockchain.Blockchain)
 
 type BlockchainServer struct {
 	port uint16
@@ -26,11 +26,11 @@ func (bcs *BlockchainServer) Port() uint16 {
 	return bcs.port
 }
 
-func (bcs *BlockchainServer) GetBlockchain() *block.Blockchain {
+func (bcs *BlockchainServer) GetBlockchain() *blockchain.Blockchain {
 	bc, ok := cache["blockchain"]
 	if !ok {
 		minersWallet := wallet.NewWallet()
-		bc = block.NewBlockchain(minersWallet.BlockchainAddress(), bcs.Port())
+		bc = blockchain.NewBlockchain(minersWallet.BlockchainAddress(), bcs.Port())
 		cache["blockchain"] = bc
 		log.Printf("private_key %v", minersWallet.PrivateKeyStr())
 		log.Printf("publick_key %v", minersWallet.PublicKeyStr())
@@ -59,8 +59,8 @@ func (bcs *BlockchainServer) Transactions(w http.ResponseWriter, req *http.Reque
 		bc := bcs.GetBlockchain()
 		transactions := bc.TransactionPool()
 		m, _ := json.Marshal(struct {
-			Transactions []*block.Transaction `json:"transactions"`
-			Length       int                  `json:"length"`
+			Transactions []*blockchain.Transaction `json:"transactions"`
+			Length       int                       `json:"length"`
 		}{
 			Transactions: transactions,
 			Length:       len(transactions),
@@ -69,7 +69,7 @@ func (bcs *BlockchainServer) Transactions(w http.ResponseWriter, req *http.Reque
 
 	case http.MethodPost:
 		decoder := json.NewDecoder(req.Body)
-		var t block.TransactionRequest
+		var t blockchain.TransactionRequest
 		err := decoder.Decode(&t)
 		if err != nil {
 			log.Printf("ERROR: %v", err)
@@ -99,7 +99,7 @@ func (bcs *BlockchainServer) Transactions(w http.ResponseWriter, req *http.Reque
 		io.WriteString(w, string(m))
 	case http.MethodPut:
 		decoder := json.NewDecoder(req.Body)
-		var t block.TransactionRequest
+		var t blockchain.TransactionRequest
 		err := decoder.Decode(&t)
 		if err != nil {
 			log.Printf("ERROR: %v", err)
@@ -178,7 +178,7 @@ func (bcs *BlockchainServer) Amount(w http.ResponseWriter, req *http.Request) {
 		blockchainAddress := req.URL.Query().Get("blockchain_address")
 		amount := bcs.GetBlockchain().CalculateTotalAmount(blockchainAddress)
 
-		ar := &block.AmountResponse{amount}
+		ar := &blockchain.AmountResponse{amount}
 		m, _ := ar.MarshalJSON()
 
 		w.Header().Add("Content-Type", "application/json")
