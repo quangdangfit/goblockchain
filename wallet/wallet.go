@@ -7,9 +7,11 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
+
 	"github.com/btcsuite/btcutil/base58"
-	"goblockchain/utils"
 	"golang.org/x/crypto/ripemd160"
+
+	"github.com/quangdangfit/goblockchain/utils"
 )
 
 type Wallet struct {

@@ -4,15 +4,16 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"goblockchain/block"
-	"goblockchain/utils"
-	"goblockchain/wallet"
 	"html/template"
 	"io"
 	"log"
 	"net/http"
 	"path"
 	"strconv"
+
+	"github.com/quangdangfit/goblockchain/block"
+	"github.com/quangdangfit/goblockchain/utils"
+	"github.com/quangdangfit/goblockchain/wallet"
 )
 
 const tempDir = "wallet_server/templates"
